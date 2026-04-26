@@ -2,47 +2,58 @@
 <html>
 
 <head>
-  <title>Salu English Academy System</title>
+<title>Salu English Academy System</title>
 
-  <style>
-    body { font-family: Arial; background:#f0f2f5; }
-    h1 { text-align:center; }
+<style>
+body { font-family: Arial; background:#f0f2f5; }
+h1 { text-align:center; }
 
-    form {
-      width:600px; margin:auto; background:white;
-      padding:20px; border-radius:10px;
-    }
+form {
+  width:650px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+}
 
-    input, select {
-      width:100%; padding:8px; margin:5px 0;
-    }
+input, select {
+  width:100%;
+  padding:8px;
+  margin:5px 0;
+}
 
-    button {
-      width:100%; padding:10px; margin-top:5px;
-      background:green; color:white; border:none;
-    }
+button {
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  background:green;
+  color:white;
+  border:none;
+}
 
-    table {
-      width:95%; margin:20px auto;
-      border-collapse:collapse;
-    }
+table {
+  width:95%;
+  margin:20px auto;
+  border-collapse:collapse;
+}
 
-    th, td {
-      border:1px solid black;
-      padding:6px; font-size:12px;
-    }
+th, td {
+  border:1px solid black;
+  padding:6px;
+  font-size:12px;
+}
 
-    th { background:black; color:white; }
+th { background:black; color:white; }
 
-    #receipt, #idcard {
-      display:none;
-      border:2px solid black;
-      padding:15px;
-      width:300px;
-      margin:20px auto;
-      background:white;
-    }
-  </style>
+#receipt, #idcard {
+  display:none;
+  border:2px solid black;
+  padding:15px;
+  width:320px;
+  margin:20px auto;
+  background:white;
+}
+</style>
 
 </head>
 
@@ -58,7 +69,8 @@
 <input type="text" id="father" placeholder="Father Name">
 <input type="text" id="mother" placeholder="Mother Name">
 <input type="date" id="dob">
-<input type="text" id="aadhaar" placeholder="Aadhaar">
+
+<input type="text" id="aadhaar" placeholder="Aadhaar (12 digit)">
 
 <select id="gender">
 <option value="">Gender</option>
@@ -67,10 +79,21 @@
 </select>
 
 <input type="text" id="address" placeholder="Address">
+
 <input type="text" id="mobile" placeholder="Mobile">
 <input type="email" id="email" placeholder="Email">
-<input type="text" id="profession" placeholder="Profession">
-<input type="text" id="class" placeholder="Class">
+
+<!-- STATUS -->
+<select id="status">
+<option value="">Select Status</option>
+<option>Student</option>
+<option>Job</option>
+<option>Unemployed</option>
+</select>
+
+<input type="text" id="profession" placeholder="Profession / School / Work">
+
+<input type="text" id="className" placeholder="Class / Qualification">
 
 <select id="course">
 <option value="">Course</option>
@@ -84,7 +107,6 @@
 
 </form>
 
-<!-- TABLE -->
 <table id="table"></table>
 
 <!-- RECEIPT -->
@@ -93,7 +115,7 @@
 <p>Name: <span id="r_name"></span></p>
 <p>Mobile: <span id="r_mobile"></span></p>
 <p>Course: <span id="r_course"></span></p>
-<button onclick="printPage()">Print</button>
+<p>Status: <span id="r_status"></span></p>
 </div>
 
 <!-- ID CARD -->
@@ -107,25 +129,34 @@
 
 function saveData() {
 
-  var index = document.getElementById("index").value;
-
   var data = {
-    name: name.value,
-    mobile: mobile.value,
-    course: course.value
+    name: document.getElementById("name").value,
+    father: document.getElementById("father").value,
+    mother: document.getElementById("mother").value,
+    dob: document.getElementById("dob").value,
+    aadhaar: document.getElementById("aadhaar").value,
+    gender: document.getElementById("gender").value,
+    address: document.getElementById("address").value,
+    mobile: document.getElementById("mobile").value,
+    email: document.getElementById("email").value,
+    status: document.getElementById("status").value,
+    profession: document.getElementById("profession").value,
+    className: document.getElementById("className").value,
+    course: document.getElementById("course").value
   };
 
-  if(data.name == "" || data.mobile.length != 10) {
-    alert("Valid data dalo ❌"); return;
+  // VALIDATION
+  if(data.name == "" || data.mobile.length != 10 || data.course == "") {
+    alert("Name, Mobile, Course required ❌"); return;
+  }
+
+  if(data.aadhaar.length != 12) {
+    alert("Aadhaar 12 digit hona chahiye ❌"); return;
   }
 
   var students = JSON.parse(localStorage.getItem("students")) || [];
 
-  if(index == "") {
-    students.push(data);
-  } else {
-    students[index] = data;
-  }
+  students.push(data);
 
   localStorage.setItem("students", JSON.stringify(students));
 
@@ -144,6 +175,7 @@ function showData() {
 <tr>
 <th>Name</th>
 <th>Mobile</th>
+<th>Status</th>
 <th>Course</th>
 <th>Delete</th>
 </tr>`;
@@ -154,6 +186,7 @@ function showData() {
 <tr>
 <td>${s.name}</td>
 <td>${s.mobile}</td>
+<td>${s.status}</td>
 <td>${s.course}</td>
 <td><button onclick="deleteData(${i})">X</button></td>
 </tr>`;
@@ -174,19 +207,18 @@ function clearForm() {
 
 function showReceipt(data) {
   document.getElementById("receipt").style.display = "block";
+
   document.getElementById("r_name").innerText = data.name;
   document.getElementById("r_mobile").innerText = data.mobile;
   document.getElementById("r_course").innerText = data.course;
+  document.getElementById("r_status").innerText = data.status;
 }
 
 function showID(data) {
   document.getElementById("idcard").style.display = "block";
+
   document.getElementById("id_name").innerText = "Name: " + data.name;
   document.getElementById("id_course").innerText = "Course: " + data.course;
-}
-
-function printPage() {
-  window.print();
 }
 
 showData();
