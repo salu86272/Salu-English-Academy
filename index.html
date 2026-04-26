@@ -1,217 +1,159 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Salu English Academy ERP</title>
+<meta charset="UTF-8">
+<title>Salu English Academy Complete ERP</title>
 <style>
-body{font-family:Arial;background:#f0f2f5}
+body{font-family:Arial;background:#eef2f7;margin:0;padding:20px}
 h1,h2,h3{text-align:center}
 .box{
-width:700px;
-margin:auto;
-background:#fff;
+max-width:800px;
+margin:20px auto;
+background:white;
 padding:20px;
-border-radius:12px;
+border-radius:15px;
 box-shadow:0 0 10px #ccc;
-margin-bottom:20px
 }
-input,select{
-width:100%;
-padding:10px;
-margin:6px 0
-}
-button{
+input,select,button{
 width:100%;
 padding:12px;
-margin-top:6px;
+margin:8px 0;
+box-sizing:border-box;
+}
+button{
 background:green;
-color:#fff;
-border:none
+color:white;
+border:none;
+font-size:16px;
 }
 table{
 width:95%;
 margin:20px auto;
 border-collapse:collapse;
-background:#fff
+background:white;
 }
-th,td{
-border:1px solid #000;
-padding:8px
-}
-th{
-background:#000;
-color:#fff
-}
-#receipt,#idcard{
-display:none;
-width:340px;
-margin:20px auto;
-background:#fff;
-border:2px solid #000;
-padding:20px
-}
+th,td{border:1px solid #000;padding:8px}
+th{background:#000;color:#fff}
+#receipt,#idcard,#certificate{display:none;background:#fff;border:2px solid #000;padding:20px;margin:20px auto;max-width:380px}
+img{max-width:100px;display:block;margin:auto}
 </style>
 </head>
 <body>
 
 <h1>Salu English Academy ERP</h1>
 
-
 <div class="box">
 <h2>Student Login</h2>
-
 <input id="loginEmail" placeholder="Email">
 <input id="loginPass" type="password" placeholder="Password">
-
 <button onclick="signup()">Sign Up</button>
-
 <button onclick="login()">Login</button>
-
 </div>
 
-
-
 <div class="box">
-
-<h2>Student Admission Form</h2>
-
+<h2>Admission Form</h2>
 <input id="name" placeholder="Student Name">
 <input id="father" placeholder="Father Name">
 <input id="mother" placeholder="Mother Name">
 <input type="date" id="dob">
 <input id="aadhaar" placeholder="Aadhaar">
-
 <select id="gender">
 <option>Gender</option>
 <option>Male</option>
 <option>Female</option>
 </select>
-
 <input id="address" placeholder="Address">
 <input id="mobile" placeholder="Mobile">
 <input id="email" placeholder="Email">
-
 <select id="status">
-<option>Status</option>
 <option>Student</option>
 <option>Job</option>
 </select>
-
 <input id="profession" placeholder="Profession">
 <input id="className" placeholder="Class">
-
 <select id="course">
-<option>Course</option>
 <option>Spoken English</option>
 <option>Math</option>
 <option>Science</option>
 </select>
-
-<button onclick="saveData()">
-Save Admission
-</button>
-
+<input type="file" id="photo" accept="image/*">
+<button onclick="saveData()">Save Admission</button>
 </div>
-
-
 
 <table id="table"></table>
 
-
-
 <div class="box">
-
 <h2>Admin Dashboard</h2>
 
 <h3>Attendance</h3>
-
-<input id="attName"
-placeholder="Student Name">
-
+<input id="attName" placeholder="Student Name">
 <select id="attendance">
 <option>Present</option>
 <option>Absent</option>
 </select>
+<button onclick="markAttendance()">Save Attendance</button>
 
-<button onclick="markAttendance()">
-Mark Attendance
-</button>
-
-
-<h3>Fees Panel</h3>
-
-<input id="feeName"
-placeholder="Student Name">
-
-<input id="feeAmount"
-placeholder="Fee Amount">
-
-<button onclick="saveFee()">
-Save Fee
-</button>
-
+<h3>Fees</h3>
+<input id="feeName" placeholder="Student Name">
+<input id="feeAmount" placeholder="Fee Amount">
+<button onclick="saveFee()">Save Fee</button>
+<button onclick="printFeeReceipt()">Print Fee Receipt</button>
 
 <h3>Search Student</h3>
-
-<input id="searchName"
-placeholder="Student Name">
-
-<button onclick="searchStudent()">
-Search Student
-</button>
-
+<input id="searchName" placeholder="Student Name">
+<button onclick="searchStudent()">Search</button>
 </div>
 
+<div class="box">
+<h2>Admin Lock</h2>
+<input id="adminUser" placeholder="Admin Username">
+<input id="adminPass" type="password" placeholder="Password">
+<button onclick="adminLogin()">Admin Login</button>
 
+<h2>Certificate Generator</h2>
+<input id="certName" placeholder="Student Name">
+<button onclick="generateCertificate()">Generate Certificate</button>
 
+<h2>Marksheet</h2>
+<input id="markName" placeholder="Student Name">
+<input id="english" placeholder="English Marks">
+<input id="math" placeholder="Math Marks">
+<input id="science" placeholder="Science Marks">
+<button onclick="saveMarksheet()">Save Marksheet</button>
+<button onclick="showMarksheet()">View Marksheet</button>
+
+<button onclick="window.print()">Print PDF Report</button>
+</div>
 
 <div id="receipt">
-
 <h2>Admission Receipt</h2>
-
-<p>Name:
-<span id="r_name"></span>
-</p>
-
-<p>Mobile:
-<span id="r_mobile"></span>
-</p>
-
-<p>Course:
-<span id="r_course"></span>
-</p>
-
-<p>Status:
-<span id="r_status"></span>
-</p>
-
+<p>Name: <span id="r_name"></span></p>
+<p>Mobile: <span id="r_mobile"></span></p>
+<p>Course: <span id="r_course"></span></p>
+<p>Status: <span id="r_status"></span></p>
 <p>Fee ₹500</p>
-
+<button onclick="printReceipt()">Print Receipt</button>
 </div>
-
-
 
 <div id="idcard">
-
 <h2>ID Card</h2>
-
+<img id="studentPhoto">
 <p id="id_name"></p>
-
 <p id="id_course"></p>
-
 <p id="studentid"></p>
-
+<button onclick="printIDCard()">Print ID Card</button>
 </div>
 
-
-
+<div id="certificate">
+<h2>Certificate</h2>
+<p id="certText"></p>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
-
 <script>
-
 var firebaseConfig={
 apiKey:"AIzaSyDL7EqGc9GY1xAWLtBHLPAIZomnps82c1Y",
 authDomain:"salu-english-academy.firebaseapp.com",
@@ -222,56 +164,27 @@ appId:"1:371798289665:web:2b724debe8ffd6d0ca3f00"
 };
 
 firebase.initializeApp(firebaseConfig);
-
 var db=firebase.firestore();
-
 var auth=firebase.auth();
 
-
-
 function signup(){
-
 auth.createUserWithEmailAndPassword(
 loginEmail.value,
 loginPass.value
-)
-
-.then(function(){
-alert("Signup Success");
-})
-
-.catch(function(e){
-alert(e.message);
-});
-
+).then(()=>alert('Signup Success'))
+.catch(e=>alert(e.message));
 }
 
-
-
 function login(){
-
 auth.signInWithEmailAndPassword(
 loginEmail.value,
 loginPass.value
-)
-
-.then(function(){
-alert("Login Success");
-})
-
-.catch(function(e){
-alert(e.message);
-});
-
+).then(()=>alert('Login Success'))
+.catch(e=>alert(e.message));
 }
 
-
-
-
 function saveData(){
-
 var data={
-
 name:name.value,
 father:father.value,
 mother:mother.value,
@@ -285,201 +198,158 @@ status:status.value,
 profession:profession.value,
 className:className.value,
 course:course.value
-
 };
 
-
-if(
-data.name=="" ||
-data.mobile.length!=10
-){
-alert("Valid Mobile Daliye");
+if(data.name==''||data.mobile.length!=10){
+alert('Valid Mobile Daliye');
 return;
 }
 
-
-db.collection("students")
-.add(data)
-
+db.collection('students').add(data)
 .then(function(){
-
-alert("Admission Saved");
-
+alert('Admission Saved');
 showData();
-
 showReceipt(data);
-
 showID(data);
-
-})
-
-.catch(function(e){
-
-alert(e.message);
-
 });
-
 }
 
-
-
 function showData(){
-
-table.innerHTML=
-`
-<tr>
+table.innerHTML=`<tr>
 <th>Name</th>
 <th>Mobile</th>
 <th>Status</th>
 <th>Course</th>
-</tr>
-`;
+</tr>`;
 
-db.collection("students")
-.get()
-.then(function(res){
-
+db.collection('students').get().then(function(res){
 res.forEach(function(doc){
-
-var s=doc.data();
-
-table.innerHTML+=
-`
-<tr>
+let s=doc.data();
+table.innerHTML+=`<tr>
 <td>${s.name}</td>
 <td>${s.mobile}</td>
 <td>${s.status}</td>
 <td>${s.course}</td>
-</tr>
-`;
-
+</tr>`;
 });
-
 });
-
 }
 
-
-
 function showReceipt(d){
-
-receipt.style.display="block";
-
+receipt.style.display='block';
 r_name.innerText=d.name;
 r_mobile.innerText=d.mobile;
 r_course.innerText=d.course;
 r_status.innerText=d.status;
-
 }
-
-
 
 function showID(d){
-
-idcard.style.display="block";
-
-id_name.innerText=
-"Name: "+d.name;
-
-id_course.innerText=
-"Course: "+d.course;
-
-studentid.innerText=
-"ID: SEA"+
-Math.floor(
-Math.random()*9000+1000
-);
-
+idcard.style.display='block';
+var file=photo.files[0];
+if(file){
+var reader=new FileReader();
+reader.onload=function(e){
+studentPhoto.src=e.target.result;
 }
-
-
+reader.readAsDataURL(file);
+}
+id_name.innerText='Name: '+d.name;
+id_course.innerText='Course: '+d.course;
+studentid.innerText='ID: SEA'+Math.floor(Math.random()*9000+1000);
+}
 
 function markAttendance(){
-
-db.collection("attendance")
-.add({
-
+db.collection('attendance').add({
 name:attName.value,
-
 status:attendance.value,
-
-date:new Date()
-.toLocaleDateString()
-
-})
-
-.then(function(){
-
-alert("Attendance Saved");
-
-});
-
+date:new Date().toLocaleDateString()
+}).then(()=>alert('Attendance Saved'));
 }
-
-
 
 function saveFee(){
-
-db.collection("fees")
-.add({
-
+db.collection('fees').add({
 name:feeName.value,
-
 amount:feeAmount.value,
-
-date:new Date()
-.toLocaleDateString()
-
-})
-
-.then(function(){
-
-alert("Fee Saved");
-
-});
-
+date:new Date().toLocaleDateString()
+}).then(()=>alert('Fee Saved'));
 }
-
-
 
 function searchStudent(){
-
-db.collection("students")
-.where(
-"name",
-"==",
-searchName.value
-)
-
+db.collection('students')
+.where('name','==',searchName.value)
 .get()
-
 .then(function(res){
-
-if(res.empty){
-alert("Student Not Found");
-return;
-}
-
+if(res.empty){alert('Student Not Found'); return;}
 res.forEach(function(doc){
-
-var s=doc.data();
-
-alert(
-"Name: "+s.name+
-"\nCourse: "+s.course+
-"\nMobile: "+s.mobile
-);
-
+let s=doc.data();
+alert('Name: '+s.name+'\nCourse: '+s.course+'\nMobile: '+s.mobile);
 });
-
 });
-
 }
 
+function adminLogin(){
+if(adminUser.value=='admin'&&adminPass.value=='12345'){
+alert('Admin Access Granted');
+}else{
+alert('Wrong Password');
+}
+}
 
+function generateCertificate(){
+certificate.style.display='block';
+certText.innerHTML='This certifies '+certName.value+' completed Spoken English Course.';
+}
+
+function saveMarksheet(){
+db.collection('marksheets').add({
+name:markName.value,
+english:english.value,
+math:math.value,
+science:science.value
+}).then(()=>alert('Marksheet Saved'));
+}
+
+function showMarksheet(){
+db.collection('marksheets')
+.where('name','==',markName.value)
+.get()
+.then(function(res){
+res.forEach(function(doc){
+let m=doc.data();
+let total=Number(m.english)+Number(m.math)+Number(m.science);
+alert(
+'English: '+m.english+
+'\nMath: '+m.math+
+'\nScience: '+m.science+
+'\nTotal: '+total
+);
+});
+});
+}
+
+function printIDCard(){
+var w=window.open('','','width=500,height=600');
+w.document.write(idcard.innerHTML);
+w.print();
+}
+
+function printReceipt(){
+var w=window.open('','','width=500,height=600');
+w.document.write(receipt.innerHTML);
+w.print();
+}
+
+function printFeeReceipt(){
+var w=window.open('','','width=500,height=600');
+w.document.write(
+'<h2>Fee Receipt</h2>'+
+'<p>Name:'+feeName.value+'</p>'+
+'<p>Amount: ₹'+feeAmount.value+'</p>'
+);
+w.print();
+}
 
 showData();
-
 </script>
 
 </body>
