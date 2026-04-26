@@ -1,74 +1,84 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 <title>Salu English Academy System</title>
 
 <style>
-body { font-family: Arial; background:#f0f2f5; }
-h1 { text-align:center; }
-
-form {
-  width:650px;
-  margin:auto;
-  background:white;
-  padding:20px;
-  border-radius:10px;
+body{
+font-family:Arial;
+background:#f0f2f5;
 }
 
-input, select {
-  width:100%;
-  padding:8px;
-  margin:5px 0;
+h1{
+text-align:center;
 }
 
-button {
-  width:100%;
-  padding:10px;
-  margin-top:5px;
-  background:green;
-  color:white;
-  border:none;
+form{
+width:650px;
+margin:auto;
+background:#fff;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px #ccc;
 }
 
-table {
-  width:95%;
-  margin:20px auto;
-  border-collapse:collapse;
+input,select{
+width:100%;
+padding:10px;
+margin:6px 0;
 }
 
-th, td {
-  border:1px solid black;
-  padding:6px;
-  font-size:12px;
+button{
+width:100%;
+padding:12px;
+background:green;
+color:#fff;
+border:none;
+font-size:16px;
+cursor:pointer;
 }
 
-th { background:black; color:white; }
+table{
+width:95%;
+margin:20px auto;
+border-collapse:collapse;
+background:white;
+}
 
-#receipt, #idcard {
-  display:none;
-  border:2px solid black;
-  padding:15px;
-  width:320px;
-  margin:20px auto;
-  background:white;
+th,td{
+border:1px solid #000;
+padding:8px;
+font-size:12px;
+}
+
+th{
+background:black;
+color:white;
+}
+
+#receipt,#idcard{
+display:none;
+border:2px solid black;
+padding:20px;
+width:340px;
+margin:20px auto;
+background:white;
 }
 </style>
 
 </head>
-
 <body>
 
 <h1>Student Admission System</h1>
 
 <form>
 
-<input type="text" id="name" placeholder="Name">
-<input type="text" id="father" placeholder="Father Name">
-<input type="text" id="mother" placeholder="Mother Name">
+<input id="name" placeholder="Student Name">
+<input id="father" placeholder="Father Name">
+<input id="mother" placeholder="Mother Name">
 <input type="date" id="dob">
 
-<input type="text" id="aadhaar" placeholder="Aadhaar">
+<input id="aadhaar" placeholder="Aadhaar Number">
 
 <select id="gender">
 <option value="">Gender</option>
@@ -76,9 +86,9 @@ th { background:black; color:white; }
 <option>Female</option>
 </select>
 
-<input type="text" id="address" placeholder="Address">
-<input type="text" id="mobile" placeholder="Mobile">
-<input type="email" id="email" placeholder="Email">
+<input id="address" placeholder="Address">
+<input id="mobile" placeholder="Mobile">
+<input id="email" placeholder="Email">
 
 <select id="status">
 <option value="">Status</option>
@@ -87,8 +97,8 @@ th { background:black; color:white; }
 <option>Unemployed</option>
 </select>
 
-<input type="text" id="profession" placeholder="Profession">
-<input type="text" id="className" placeholder="Class">
+<input id="profession" placeholder="Profession">
+<input id="className" placeholder="Class">
 
 <select id="course">
 <option value="">Course</option>
@@ -97,123 +107,163 @@ th { background:black; color:white; }
 <option>Science</option>
 </select>
 
-<button type="button" onclick="saveData()">Save</button>
+<button type="button" onclick="saveData()">Save Admission</button>
 
 </form>
 
+
 <table id="table"></table>
 
-<!-- Receipt -->
+
 <div id="receipt">
-<h3>Receipt</h3>
+<h2>Admission Receipt</h2>
 <p>Name: <span id="r_name"></span></p>
 <p>Mobile: <span id="r_mobile"></span></p>
 <p>Course: <span id="r_course"></span></p>
 <p>Status: <span id="r_status"></span></p>
+<p>Admission Fee: ₹500</p>
 </div>
 
-<!-- ID Card -->
+
 <div id="idcard">
-<h3>ID CARD</h3>
+<h2>Student ID Card</h2>
 <p id="id_name"></p>
 <p id="id_course"></p>
+<p id="studentid"></p>
 </div>
 
-<!-- Firebase CDN -->
+
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
 
-// 🔥 आपका Firebase config
 var firebaseConfig = {
-  apiKey: "AIzaSyDL7EqGc9GY1xAWLtBHLPAIZomnps82c1Y",
-  authDomain: "salu-english-academy.firebaseapp.com",
-  projectId: "salu-english-academy",
-  storageBucket: "salu-english-academy.firebasestorage.app",
-  messagingSenderId: "371798289665",
-  appId: "1:371798289665:web:2b724debe8ffd6d0ca3f00"
+apiKey:"AIzaSyDL7EqGc9GY1xAWLtBHLPAIZomnps82c1Y",
+authDomain:"salu-english-academy.firebaseapp.com",
+projectId:"salu-english-academy",
+storageBucket:"salu-english-academy.firebasestorage.app",
+messagingSenderId:"371798289665",
+appId:"1:371798289665:web:2b724debe8ffd6d0ca3f00"
 };
 
-// Initialize
 firebase.initializeApp(firebaseConfig);
-var db = firebase.firestore();
 
+var db=firebase.firestore();
 
-// SAVE DATA
-function saveData() {
+function saveData(){
 
-  var data = {
-    name: document.getElementById("name").value,
-    mobile: document.getElementById("mobile").value,
-    course: document.getElementById("course").value,
-    status: document.getElementById("status").value
-  };
+var data={
+name:document.getElementById("name").value,
+father:document.getElementById("father").value,
+mother:document.getElementById("mother").value,
+dob:document.getElementById("dob").value,
+aadhaar:document.getElementById("aadhaar").value,
+gender:document.getElementById("gender").value,
+address:document.getElementById("address").value,
+mobile:document.getElementById("mobile").value,
+email:document.getElementById("email").value,
+status:document.getElementById("status").value,
+profession:document.getElementById("profession").value,
+className:document.getElementById("className").value,
+course:document.getElementById("course").value
+};
 
-  if(data.name == "" || data.mobile.length != 10) {
-    alert("Valid data dalo ❌"); return;
-  }
+if(data.name=="" || data.mobile.length!=10){
+alert("Valid Data Enter Kare");
+return;
+}
 
-  db.collection("students").add(data)
-  .then(() => {
-    alert("Saved ✅");
-    showData();
-    showReceipt(data);
-    showID(data);
-  });
+db.collection("students").add(data)
+.then(function(){
+
+alert("Admission Saved Successfully");
+
+document.querySelector("form").reset();
+
+showData();
+showReceipt(data);
+showID(data);
+
+})
+.catch(function(error){
+alert(error.message);
+});
 
 }
 
 
-// SHOW DATA
-function showData() {
 
-  var table = document.getElementById("table");
+function showData(){
 
-  table.innerHTML = `
+var table=document.getElementById("table");
+
+table.innerHTML=`
 <tr>
 <th>Name</th>
 <th>Mobile</th>
 <th>Status</th>
 <th>Course</th>
-</tr>`;
+</tr>
+`;
 
-  db.collection("students").get().then((res) => {
-    res.forEach((doc) => {
-      var s = doc.data();
+db.collection("students").get()
+.then(function(res){
 
-      table.innerHTML += `
+res.forEach(function(doc){
+
+var s=doc.data();
+
+table.innerHTML+=`
 <tr>
 <td>${s.name}</td>
 <td>${s.mobile}</td>
 <td>${s.status}</td>
 <td>${s.course}</td>
-</tr>`;
-    });
-  });
+</tr>
+`;
+
+});
+
+});
 
 }
 
 
-// RECEIPT
-function showReceipt(data) {
-  document.getElementById("receipt").style.display = "block";
-  r_name.innerText = data.name;
-  r_mobile.innerText = data.mobile;
-  r_course.innerText = data.course;
-  r_status.innerText = data.status;
+
+function showReceipt(data){
+
+document.getElementById("receipt").style.display="block";
+
+document.getElementById("r_name").innerText=data.name;
+document.getElementById("r_mobile").innerText=data.mobile;
+document.getElementById("r_course").innerText=data.course;
+document.getElementById("r_status").innerText=data.status;
+
 }
 
 
-// ID CARD
-function showID(data) {
-  document.getElementById("idcard").style.display = "block";
-  id_name.innerText = "Name: " + data.name;
-  id_course.innerText = "Course: " + data.course;
+
+function showID(data){
+
+document.getElementById("idcard").style.display="block";
+
+document.getElementById("id_name").innerText=
+"Name: "+data.name;
+
+document.getElementById("id_course").innerText=
+"Course: "+data.course;
+
+var sid="SEA"+Math.floor(Math.random()*9000+1000);
+
+document.getElementById("studentid").innerText=
+"Student ID: "+sid;
+
 }
 
 
-// LOAD DATA
+
 showData();
 
 </script>
