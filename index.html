@@ -1,87 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Salu English Academy System</title>
-
+<title>Salu English Academy ERP</title>
 <style>
-body{
-font-family:Arial;
-background:#f0f2f5;
-}
-
-h1{
-text-align:center;
-}
-
-form{
-width:650px;
+body{font-family:Arial;background:#f0f2f5}
+h1,h2,h3{text-align:center}
+.box{
+width:700px;
 margin:auto;
 background:#fff;
 padding:20px;
-border-radius:10px;
+border-radius:12px;
 box-shadow:0 0 10px #ccc;
+margin-bottom:20px
 }
-
 input,select{
 width:100%;
 padding:10px;
-margin:6px 0;
+margin:6px 0
 }
-
 button{
 width:100%;
 padding:12px;
+margin-top:6px;
 background:green;
 color:#fff;
-border:none;
-font-size:16px;
-cursor:pointer;
+border:none
 }
-
 table{
 width:95%;
 margin:20px auto;
 border-collapse:collapse;
-background:white;
+background:#fff
 }
-
 th,td{
 border:1px solid #000;
-padding:8px;
-font-size:12px;
+padding:8px
 }
-
 th{
-background:black;
-color:white;
+background:#000;
+color:#fff
 }
-
 #receipt,#idcard{
 display:none;
-border:2px solid black;
-padding:20px;
 width:340px;
 margin:20px auto;
-background:white;
+background:#fff;
+border:2px solid #000;
+padding:20px
 }
 </style>
-
 </head>
 <body>
 
-<h1>Student Admission System</h1>
+<h1>Salu English Academy ERP</h1>
 
-<form>
+
+<div class="box">
+<h2>Student Login</h2>
+
+<input id="loginEmail" placeholder="Email">
+<input id="loginPass" type="password" placeholder="Password">
+
+<button onclick="signup()">Sign Up</button>
+
+<button onclick="login()">Login</button>
+
+</div>
+
+
+
+<div class="box">
+
+<h2>Student Admission Form</h2>
 
 <input id="name" placeholder="Student Name">
 <input id="father" placeholder="Father Name">
 <input id="mother" placeholder="Mother Name">
 <input type="date" id="dob">
-
-<input id="aadhaar" placeholder="Aadhaar Number">
+<input id="aadhaar" placeholder="Aadhaar">
 
 <select id="gender">
-<option value="">Gender</option>
+<option>Gender</option>
 <option>Male</option>
 <option>Female</option>
 </select>
@@ -91,55 +91,128 @@ background:white;
 <input id="email" placeholder="Email">
 
 <select id="status">
-<option value="">Status</option>
+<option>Status</option>
 <option>Student</option>
 <option>Job</option>
-<option>Unemployed</option>
 </select>
 
 <input id="profession" placeholder="Profession">
 <input id="className" placeholder="Class">
 
 <select id="course">
-<option value="">Course</option>
+<option>Course</option>
 <option>Spoken English</option>
 <option>Math</option>
 <option>Science</option>
 </select>
 
-<button type="button" onclick="saveData()">Save Admission</button>
+<button onclick="saveData()">
+Save Admission
+</button>
 
-</form>
+</div>
+
 
 
 <table id="table"></table>
 
 
-<div id="receipt">
-<h2>Admission Receipt</h2>
-<p>Name: <span id="r_name"></span></p>
-<p>Mobile: <span id="r_mobile"></span></p>
-<p>Course: <span id="r_course"></span></p>
-<p>Status: <span id="r_status"></span></p>
-<p>Admission Fee: ₹500</p>
+
+<div class="box">
+
+<h2>Admin Dashboard</h2>
+
+<h3>Attendance</h3>
+
+<input id="attName"
+placeholder="Student Name">
+
+<select id="attendance">
+<option>Present</option>
+<option>Absent</option>
+</select>
+
+<button onclick="markAttendance()">
+Mark Attendance
+</button>
+
+
+<h3>Fees Panel</h3>
+
+<input id="feeName"
+placeholder="Student Name">
+
+<input id="feeAmount"
+placeholder="Fee Amount">
+
+<button onclick="saveFee()">
+Save Fee
+</button>
+
+
+<h3>Search Student</h3>
+
+<input id="searchName"
+placeholder="Student Name">
+
+<button onclick="searchStudent()">
+Search Student
+</button>
+
 </div>
+
+
+
+
+<div id="receipt">
+
+<h2>Admission Receipt</h2>
+
+<p>Name:
+<span id="r_name"></span>
+</p>
+
+<p>Mobile:
+<span id="r_mobile"></span>
+</p>
+
+<p>Course:
+<span id="r_course"></span>
+</p>
+
+<p>Status:
+<span id="r_status"></span>
+</p>
+
+<p>Fee ₹500</p>
+
+</div>
+
 
 
 <div id="idcard">
-<h2>Student ID Card</h2>
+
+<h2>ID Card</h2>
+
 <p id="id_name"></p>
+
 <p id="id_course"></p>
+
 <p id="studentid"></p>
+
 </div>
+
 
 
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
 
 <script>
 
-var firebaseConfig = {
+var firebaseConfig={
 apiKey:"AIzaSyDL7EqGc9GY1xAWLtBHLPAIZomnps82c1Y",
 authDomain:"salu-english-academy.firebaseapp.com",
 projectId:"salu-english-academy",
@@ -152,43 +225,98 @@ firebase.initializeApp(firebaseConfig);
 
 var db=firebase.firestore();
 
+var auth=firebase.auth();
+
+
+
+function signup(){
+
+auth.createUserWithEmailAndPassword(
+loginEmail.value,
+loginPass.value
+)
+
+.then(function(){
+alert("Signup Success");
+})
+
+.catch(function(e){
+alert(e.message);
+});
+
+}
+
+
+
+function login(){
+
+auth.signInWithEmailAndPassword(
+loginEmail.value,
+loginPass.value
+)
+
+.then(function(){
+alert("Login Success");
+})
+
+.catch(function(e){
+alert(e.message);
+});
+
+}
+
+
+
+
 function saveData(){
 
 var data={
-name:document.getElementById("name").value,
-father:document.getElementById("father").value,
-mother:document.getElementById("mother").value,
-dob:document.getElementById("dob").value,
-aadhaar:document.getElementById("aadhaar").value,
-gender:document.getElementById("gender").value,
-address:document.getElementById("address").value,
-mobile:document.getElementById("mobile").value,
-email:document.getElementById("email").value,
-status:document.getElementById("status").value,
-profession:document.getElementById("profession").value,
-className:document.getElementById("className").value,
-course:document.getElementById("course").value
+
+name:name.value,
+father:father.value,
+mother:mother.value,
+dob:dob.value,
+aadhaar:aadhaar.value,
+gender:gender.value,
+address:address.value,
+mobile:mobile.value,
+email:email.value,
+status:status.value,
+profession:profession.value,
+className:className.value,
+course:course.value
+
 };
 
-if(data.name=="" || data.mobile.length!=10){
-alert("Valid Data Enter Kare");
+
+if(
+data.name=="" ||
+data.mobile.length!=10
+){
+alert("Valid Mobile Daliye");
 return;
 }
 
-db.collection("students").add(data)
+
+db.collection("students")
+.add(data)
+
 .then(function(){
 
-alert("Admission Saved Successfully");
-
-document.querySelector("form").reset();
+alert("Admission Saved");
 
 showData();
+
 showReceipt(data);
+
 showID(data);
 
 })
-.catch(function(error){
-alert(error.message);
+
+.catch(function(e){
+
+alert(e.message);
+
 });
 
 }
@@ -197,9 +325,8 @@ alert(error.message);
 
 function showData(){
 
-var table=document.getElementById("table");
-
-table.innerHTML=`
+table.innerHTML=
+`
 <tr>
 <th>Name</th>
 <th>Mobile</th>
@@ -208,14 +335,16 @@ table.innerHTML=`
 </tr>
 `;
 
-db.collection("students").get()
+db.collection("students")
+.get()
 .then(function(res){
 
 res.forEach(function(doc){
 
 var s=doc.data();
 
-table.innerHTML+=`
+table.innerHTML+=
+`
 <tr>
 <td>${s.name}</td>
 <td>${s.mobile}</td>
@@ -232,33 +361,118 @@ table.innerHTML+=`
 
 
 
-function showReceipt(data){
+function showReceipt(d){
 
-document.getElementById("receipt").style.display="block";
+receipt.style.display="block";
 
-document.getElementById("r_name").innerText=data.name;
-document.getElementById("r_mobile").innerText=data.mobile;
-document.getElementById("r_course").innerText=data.course;
-document.getElementById("r_status").innerText=data.status;
+r_name.innerText=d.name;
+r_mobile.innerText=d.mobile;
+r_course.innerText=d.course;
+r_status.innerText=d.status;
 
 }
 
 
 
-function showID(data){
+function showID(d){
 
-document.getElementById("idcard").style.display="block";
+idcard.style.display="block";
 
-document.getElementById("id_name").innerText=
-"Name: "+data.name;
+id_name.innerText=
+"Name: "+d.name;
 
-document.getElementById("id_course").innerText=
-"Course: "+data.course;
+id_course.innerText=
+"Course: "+d.course;
 
-var sid="SEA"+Math.floor(Math.random()*9000+1000);
+studentid.innerText=
+"ID: SEA"+
+Math.floor(
+Math.random()*9000+1000
+);
 
-document.getElementById("studentid").innerText=
-"Student ID: "+sid;
+}
+
+
+
+function markAttendance(){
+
+db.collection("attendance")
+.add({
+
+name:attName.value,
+
+status:attendance.value,
+
+date:new Date()
+.toLocaleDateString()
+
+})
+
+.then(function(){
+
+alert("Attendance Saved");
+
+});
+
+}
+
+
+
+function saveFee(){
+
+db.collection("fees")
+.add({
+
+name:feeName.value,
+
+amount:feeAmount.value,
+
+date:new Date()
+.toLocaleDateString()
+
+})
+
+.then(function(){
+
+alert("Fee Saved");
+
+});
+
+}
+
+
+
+function searchStudent(){
+
+db.collection("students")
+.where(
+"name",
+"==",
+searchName.value
+)
+
+.get()
+
+.then(function(res){
+
+if(res.empty){
+alert("Student Not Found");
+return;
+}
+
+res.forEach(function(doc){
+
+var s=doc.data();
+
+alert(
+"Name: "+s.name+
+"\nCourse: "+s.course+
+"\nMobile: "+s.mobile
+);
+
+});
+
+});
 
 }
 
