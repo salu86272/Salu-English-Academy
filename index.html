@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Salu English Academy System</title>
+
+  <style>
+    body { font-family: Arial; background:#f0f2f5; }
+    h1 { text-align:center; }
+
+    form {
+      width:600px; margin:auto; background:white;
+      padding:20px; border-radius:10px;
+    }
+
+    input, select {
+      width:100%; padding:8px; margin:5px 0;
+    }
+
+    button {
+      width:100%; padding:10px; margin-top:5px;
+      background:green; color:white; border:none;
+    }
+
+    table {
+      width:95%; margin:20px auto;
+      border-collapse:collapse;
+    }
+
+    th, td {
+      border:1px solid black;
+      padding:6px; font-size:12px;
+    }
+
+    th { background:black; color:white; }
+
+    #receipt, #idcard {
+      display:none;
+      border:2px solid black;
+      padding:15px;
+      width:300px;
+      margin:20px auto;
+      background:white;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<h1>Student Admission System</h1>
+
+<form>
+
+<input type="hidden" id="index">
+
+<input type="text" id="name" placeholder="Name">
+<input type="text" id="father" placeholder="Father Name">
+<input type="text" id="mother" placeholder="Mother Name">
+<input type="date" id="dob">
+<input type="text" id="aadhaar" placeholder="Aadhaar">
+
+<select id="gender">
+<option value="">Gender</option>
+<option>Male</option>
+<option>Female</option>
+</select>
+
+<input type="text" id="address" placeholder="Address">
+<input type="text" id="mobile" placeholder="Mobile">
+<input type="email" id="email" placeholder="Email">
+<input type="text" id="profession" placeholder="Profession">
+<input type="text" id="class" placeholder="Class">
+
+<select id="course">
+<option value="">Course</option>
+<option>Spoken English</option>
+<option>Math</option>
+<option>Science</option>
+</select>
+
+<button type="button" onclick="saveData()">Save</button>
+<button type="button" onclick="clearForm()">Clear</button>
+
+</form>
+
+<!-- TABLE -->
+<table id="table"></table>
+
+<!-- RECEIPT -->
+<div id="receipt">
+<h3>Receipt</h3>
+<p>Name: <span id="r_name"></span></p>
+<p>Mobile: <span id="r_mobile"></span></p>
+<p>Course: <span id="r_course"></span></p>
+<button onclick="printPage()">Print</button>
+</div>
+
+<!-- ID CARD -->
+<div id="idcard">
+<h3>ID CARD</h3>
+<p id="id_name"></p>
+<p id="id_course"></p>
+</div>
+
+<script>
+
+function saveData() {
+
+  var index = document.getElementById("index").value;
+
+  var data = {
+    name: name.value,
+    mobile: mobile.value,
+    course: course.value
+  };
+
+  if(data.name == "" || data.mobile.length != 10) {
+    alert("Valid data dalo ❌"); return;
+  }
+
+  var students = JSON.parse(localStorage.getItem("students")) || [];
+
+  if(index == "") {
+    students.push(data);
+  } else {
+    students[index] = data;
+  }
+
+  localStorage.setItem("students", JSON.stringify(students));
+
+  showData();
+  showReceipt(data);
+  showID(data);
+  clearForm();
+}
+
+function showData() {
+
+  var students = JSON.parse(localStorage.getItem("students")) || [];
+  var table = document.getElementById("table");
+
+  table.innerHTML = `
+<tr>
+<th>Name</th>
+<th>Mobile</th>
+<th>Course</th>
+<th>Delete</th>
+</tr>`;
+
+  students.forEach(function(s, i) {
+
+    table.innerHTML += `
+<tr>
+<td>${s.name}</td>
+<td>${s.mobile}</td>
+<td>${s.course}</td>
+<td><button onclick="deleteData(${i})">X</button></td>
+</tr>`;
+  });
+
+}
+
+function deleteData(i) {
+  var students = JSON.parse(localStorage.getItem("students")) || [];
+  students.splice(i,1);
+  localStorage.setItem("students", JSON.stringify(students));
+  showData();
+}
+
+function clearForm() {
+  document.querySelector("form").reset();
+}
+
+function showReceipt(data) {
+  document.getElementById("receipt").style.display = "block";
+  document.getElementById("r_name").innerText = data.name;
+  document.getElementById("r_mobile").innerText = data.mobile;
+  document.getElementById("r_course").innerText = data.course;
+}
+
+function showID(data) {
+  document.getElementById("idcard").style.display = "block";
+  document.getElementById("id_name").innerText = "Name: " + data.name;
+  document.getElementById("id_course").innerText = "Course: " + data.course;
+}
+
+function printPage() {
+  window.print();
+}
+
+showData();
+
+</script>
+
+</body>
+</html>
