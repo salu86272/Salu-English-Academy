@@ -127,7 +127,7 @@ th, td {
 
 <script>
 
-// 🔥 आपका Firebase config (already correct)
+// 🔥 Firebase Config
 var firebaseConfig = {
   apiKey: "AIzaSyDL7EqGc9GY1xAWLtBHLPAIZomnps82c1Y",
   authDomain: "salu-english-academy.firebaseapp.com",
@@ -140,12 +140,12 @@ var db = firebase.firestore();
 var currentUser = {};
 
 
-// LOGIN
+// ✅ LOGIN (FIXED)
 function login() {
 
-  var name = username.value;
-  var mobile = mobile.value;
-  var coaching = coaching.value;
+  var name = document.getElementById("username").value;
+  var mobile = document.getElementById("mobile").value;
+  var coaching = document.getElementById("coaching").value;
 
   if(name=="" || mobile=="" || coaching=="") {
     alert("Fill all ❌"); return;
@@ -153,8 +153,8 @@ function login() {
 
   currentUser = {name, mobile, coaching};
 
-  loginBox.style.display="none";
-  dashboard.style.display="block";
+  document.getElementById("loginBox").style.display="none";
+  document.getElementById("dashboard").style.display="block";
 
 }
 
@@ -170,13 +170,13 @@ function showSection(id) {
 }
 
 
-// SAVE STUDENT (🔥 Firebase)
+// SAVE STUDENT (Firebase)
 function saveStudent() {
 
   var data = {
-    name: sname.value,
-    course: course.value,
-    fee: Number(feeAmount.value),
+    name: document.getElementById("sname").value,
+    course: document.getElementById("course").value,
+    fee: Number(document.getElementById("feeAmount").value),
     coaching: currentUser.coaching
   };
 
@@ -193,7 +193,7 @@ function saveStudent() {
 }
 
 
-// LOAD DATA (🔥 coaching wise filter)
+// LOAD DATA (Coaching wise)
 function loadData() {
 
   var table = document.getElementById("table");
@@ -228,15 +228,15 @@ function loadData() {
 </tr>`;
     });
 
-    totalFee.innerText = "Total Fee: ₹"+total;
-    teamData.innerText = "Students: "+count+" | Income: ₹"+total;
+    document.getElementById("totalFee").innerText = "Total Fee: ₹"+total;
+    document.getElementById("teamData").innerText = "Students: "+count+" | Income: ₹"+total;
 
   });
 
 }
 
 
-// ATTENDANCE (Firebase)
+// ATTENDANCE
 function markAttendance() {
 
   db.collection("attendance").add({
@@ -244,16 +244,14 @@ function markAttendance() {
     date: new Date().toDateString()
   });
 
-  attendanceCount.innerText = "Marked ✅";
+  document.getElementById("attendanceCount").innerText = "Marked ✅";
 }
 
 
 // PROFILE
-function loadProfile() {
-
-  profileData.innerText =
+function showSectionProfile() {
+  document.getElementById("profileData").innerText =
     currentUser.name+" | "+currentUser.mobile+" | "+currentUser.coaching;
-
 }
 
 </script>
