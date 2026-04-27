@@ -1,355 +1,261 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Salu English Academy Complete ERP</title>
+<title>Salu Cloud System</title>
+
 <style>
-body{font-family:Arial;background:#eef2f7;margin:0;padding:20px}
-h1,h2,h3{text-align:center}
-.box{
-max-width:800px;
-margin:20px auto;
-background:white;
-padding:20px;
-border-radius:15px;
-box-shadow:0 0 10px #ccc;
+body { font-family: Arial; background:#eef2f5; text-align:center; }
+
+.box {
+  width:320px;
+  margin:20px auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
 }
-input,select,button{
-width:100%;
-padding:12px;
-margin:8px 0;
-box-sizing:border-box;
+
+input, select, button {
+  width:100%;
+  padding:10px;
+  margin:5px 0;
 }
-button{
-background:green;
-color:white;
-border:none;
-font-size:16px;
+
+button {
+  background:green;
+  color:white;
+  border:none;
+  cursor:pointer;
 }
-table{
-width:95%;
-margin:20px auto;
-border-collapse:collapse;
-background:white;
+
+.hidden { display:none; }
+
+table {
+  width:95%;
+  margin:20px auto;
+  border-collapse:collapse;
 }
-th,td{border:1px solid #000;padding:8px}
-th{background:#000;color:#fff}
-#receipt,#idcard,#certificate{display:none;background:#fff;border:2px solid #000;padding:20px;margin:20px auto;max-width:380px}
-img{max-width:100px;display:block;margin:auto}
+
+th, td {
+  border:1px solid black;
+  padding:6px;
+}
 </style>
+
 </head>
+
 <body>
 
-<h1>Salu English Academy ERP</h1>
+<!-- LOGIN -->
+<div id="loginBox" class="box">
+<h2>Login</h2>
 
-<div class="box">
-<h2>Student Login</h2>
-<input id="loginEmail" placeholder="Email">
-<input id="loginPass" type="password" placeholder="Password">
-<button onclick="signup()">Sign Up</button>
-<button onclick="login()">Login</button>
+<input type="text" id="username" placeholder="Name">
+<input type="text" id="mobile" placeholder="Mobile">
+
+<select id="coaching">
+<option value="">Select Coaching</option>
+<option>Salu English Academy</option>
+<option>Bright Future</option>
+<option>Success Coaching</option>
+</select>
+
+<button onclick="login()">Enter</button>
 </div>
 
-<div class="box">
-<h2>Admission Form</h2>
-<input id="name" placeholder="Student Name">
-<input id="father" placeholder="Father Name">
-<input id="mother" placeholder="Mother Name">
-<input type="date" id="dob">
-<input id="aadhaar" placeholder="Aadhaar">
-<select id="gender">
-<option>Gender</option>
-<option>Male</option>
-<option>Female</option>
-</select>
-<input id="address" placeholder="Address">
-<input id="mobile" placeholder="Mobile">
-<input id="email" placeholder="Email">
-<select id="status">
-<option>Student</option>
-<option>Job</option>
-</select>
-<input id="profession" placeholder="Profession">
-<input id="className" placeholder="Class">
-<select id="course">
-<option>Spoken English</option>
-<option>Math</option>
-<option>Science</option>
-</select>
-<input type="file" id="photo" accept="image/*">
-<button onclick="saveData()">Save Admission</button>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+
+<h2>Dashboard</h2>
+
+<button onclick="showSection('admission')">New Admission</button>
+<button onclick="showSection('fee')">Fee</button>
+<button onclick="showSection('attendance')">Attendance</button>
+<button onclick="showSection('team')">Team</button>
+<button onclick="showSection('profile')">Profile</button>
+
 </div>
+
+
+<!-- ADMISSION -->
+<div id="admission" class="hidden box">
+<h3>New Admission</h3>
+<input type="text" id="sname" placeholder="Student Name">
+<input type="text" id="course" placeholder="Course">
+<input type="number" id="feeAmount" placeholder="Fee">
+
+<button onclick="saveStudent()">Save</button>
+</div>
+
+
+<!-- FEE -->
+<div id="fee" class="hidden box">
+<h3>Total Fee</h3>
+<p id="totalFee"></p>
+</div>
+
+
+<!-- ATTENDANCE -->
+<div id="attendance" class="hidden box">
+<h3>Attendance</h3>
+<button onclick="markAttendance()">Mark</button>
+<p id="attendanceCount"></p>
+</div>
+
+
+<!-- TEAM -->
+<div id="team" class="hidden box">
+<h3>Team + Income</h3>
+<p id="teamData"></p>
+</div>
+
+
+<!-- PROFILE -->
+<div id="profile" class="hidden box">
+<h3>ID Card</h3>
+<p id="profileData"></p>
+</div>
+
 
 <table id="table"></table>
 
-<div class="box">
-<h2>Admin Dashboard</h2>
 
-<h3>Attendance</h3>
-<input id="attName" placeholder="Student Name">
-<select id="attendance">
-<option>Present</option>
-<option>Absent</option>
-</select>
-<button onclick="markAttendance()">Save Attendance</button>
-
-<h3>Fees</h3>
-<input id="feeName" placeholder="Student Name">
-<input id="feeAmount" placeholder="Fee Amount">
-<button onclick="saveFee()">Save Fee</button>
-<button onclick="printFeeReceipt()">Print Fee Receipt</button>
-
-<h3>Search Student</h3>
-<input id="searchName" placeholder="Student Name">
-<button onclick="searchStudent()">Search</button>
-</div>
-
-<div class="box">
-<h2>Admin Lock</h2>
-<input id="adminUser" placeholder="Admin Username">
-<input id="adminPass" type="password" placeholder="Password">
-<button onclick="adminLogin()">Admin Login</button>
-
-<h2>Certificate Generator</h2>
-<input id="certName" placeholder="Student Name">
-<button onclick="generateCertificate()">Generate Certificate</button>
-
-<h2>Marksheet</h2>
-<input id="markName" placeholder="Student Name">
-<input id="english" placeholder="English Marks">
-<input id="math" placeholder="Math Marks">
-<input id="science" placeholder="Science Marks">
-<button onclick="saveMarksheet()">Save Marksheet</button>
-<button onclick="showMarksheet()">View Marksheet</button>
-
-<button onclick="window.print()">Print PDF Report</button>
-</div>
-
-<div id="receipt">
-<h2>Admission Receipt</h2>
-<p>Name: <span id="r_name"></span></p>
-<p>Mobile: <span id="r_mobile"></span></p>
-<p>Course: <span id="r_course"></span></p>
-<p>Status: <span id="r_status"></span></p>
-<p>Fee ₹500</p>
-<button onclick="printReceipt()">Print Receipt</button>
-</div>
-
-<div id="idcard">
-<h2>ID Card</h2>
-<img id="studentPhoto">
-<p id="id_name"></p>
-<p id="id_course"></p>
-<p id="studentid"></p>
-<button onclick="printIDCard()">Print ID Card</button>
-</div>
-
-<div id="certificate">
-<h2>Certificate</h2>
-<p id="certText"></p>
-</div>
-
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
 <script>
-var firebaseConfig={
-apiKey:"AIzaSyDL7EqGc9GY1xAWLtBHLPAIZomnps82c1Y",
-authDomain:"salu-english-academy.firebaseapp.com",
-projectId:"salu-english-academy",
-storageBucket:"salu-english-academy.firebasestorage.app",
-messagingSenderId:"371798289665",
-appId:"1:371798289665:web:2b724debe8ffd6d0ca3f00"
+
+// 🔥 आपका Firebase config (already correct)
+var firebaseConfig = {
+  apiKey: "AIzaSyDL7EqGc9GY1xAWLtBHLPAIZomnps82c1Y",
+  authDomain: "salu-english-academy.firebaseapp.com",
+  projectId: "salu-english-academy"
 };
 
 firebase.initializeApp(firebaseConfig);
-var db=firebase.firestore();
-var auth=firebase.auth();
+var db = firebase.firestore();
 
-function signup(){
-auth.createUserWithEmailAndPassword(
-loginEmail.value,
-loginPass.value
-).then(()=>alert('Signup Success'))
-.catch(e=>alert(e.message));
+var currentUser = {};
+
+
+// LOGIN
+function login() {
+
+  var name = username.value;
+  var mobile = mobile.value;
+  var coaching = coaching.value;
+
+  if(name=="" || mobile=="" || coaching=="") {
+    alert("Fill all ❌"); return;
+  }
+
+  currentUser = {name, mobile, coaching};
+
+  loginBox.style.display="none";
+  dashboard.style.display="block";
+
 }
 
-function login(){
-auth.signInWithEmailAndPassword(
-loginEmail.value,
-loginPass.value
-).then(()=>alert('Login Success'))
-.catch(e=>alert(e.message));
+
+// SHOW SECTION
+function showSection(id) {
+
+  document.querySelectorAll(".box").forEach(x=>x.classList.add("hidden"));
+
+  document.getElementById(id).classList.remove("hidden");
+
+  loadData();
 }
 
-function saveData(){
-var data={
-name:name.value,
-father:father.value,
-mother:mother.value,
-dob:dob.value,
-aadhaar:aadhaar.value,
-gender:gender.value,
-address:address.value,
-mobile:mobile.value,
-email:email.value,
-status:status.value,
-profession:profession.value,
-className:className.value,
-course:course.value
-};
 
-if(data.name==''||data.mobile.length!=10){
-alert('Valid Mobile Daliye');
-return;
+// SAVE STUDENT (🔥 Firebase)
+function saveStudent() {
+
+  var data = {
+    name: sname.value,
+    course: course.value,
+    fee: Number(feeAmount.value),
+    coaching: currentUser.coaching
+  };
+
+  if(data.name=="") {
+    alert("Name required ❌"); return;
+  }
+
+  db.collection("students").add(data)
+  .then(()=>{
+    alert("Saved Online ✅");
+    loadData();
+  });
+
 }
 
-db.collection('students').add(data)
-.then(function(){
-alert('Admission Saved');
-showData();
-showReceipt(data);
-showID(data);
-});
-}
 
-function showData(){
-table.innerHTML=`<tr>
+// LOAD DATA (🔥 coaching wise filter)
+function loadData() {
+
+  var table = document.getElementById("table");
+
+  table.innerHTML = `
+<tr>
 <th>Name</th>
-<th>Mobile</th>
-<th>Status</th>
 <th>Course</th>
+<th>Fee</th>
 </tr>`;
 
-db.collection('students').get().then(function(res){
-res.forEach(function(doc){
-let s=doc.data();
-table.innerHTML+=`<tr>
+  var total = 0;
+  var count = 0;
+
+  db.collection("students")
+  .where("coaching","==",currentUser.coaching)
+  .get()
+  .then((res)=>{
+
+    res.forEach((doc)=>{
+
+      var s = doc.data();
+
+      total += s.fee;
+      count++;
+
+      table.innerHTML += `
+<tr>
 <td>${s.name}</td>
-<td>${s.mobile}</td>
-<td>${s.status}</td>
 <td>${s.course}</td>
+<td>${s.fee}</td>
 </tr>`;
-});
-});
+    });
+
+    totalFee.innerText = "Total Fee: ₹"+total;
+    teamData.innerText = "Students: "+count+" | Income: ₹"+total;
+
+  });
+
 }
 
-function showReceipt(d){
-receipt.style.display='block';
-r_name.innerText=d.name;
-r_mobile.innerText=d.mobile;
-r_course.innerText=d.course;
-r_status.innerText=d.status;
+
+// ATTENDANCE (Firebase)
+function markAttendance() {
+
+  db.collection("attendance").add({
+    coaching: currentUser.coaching,
+    date: new Date().toDateString()
+  });
+
+  attendanceCount.innerText = "Marked ✅";
 }
 
-function showID(d){
-idcard.style.display='block';
-var file=photo.files[0];
-if(file){
-var reader=new FileReader();
-reader.onload=function(e){
-studentPhoto.src=e.target.result;
-}
-reader.readAsDataURL(file);
-}
-id_name.innerText='Name: '+d.name;
-id_course.innerText='Course: '+d.course;
-studentid.innerText='ID: SEA'+Math.floor(Math.random()*9000+1000);
+
+// PROFILE
+function loadProfile() {
+
+  profileData.innerText =
+    currentUser.name+" | "+currentUser.mobile+" | "+currentUser.coaching;
+
 }
 
-function markAttendance(){
-db.collection('attendance').add({
-name:attName.value,
-status:attendance.value,
-date:new Date().toLocaleDateString()
-}).then(()=>alert('Attendance Saved'));
-}
-
-function saveFee(){
-db.collection('fees').add({
-name:feeName.value,
-amount:feeAmount.value,
-date:new Date().toLocaleDateString()
-}).then(()=>alert('Fee Saved'));
-}
-
-function searchStudent(){
-db.collection('students')
-.where('name','==',searchName.value)
-.get()
-.then(function(res){
-if(res.empty){alert('Student Not Found'); return;}
-res.forEach(function(doc){
-let s=doc.data();
-alert('Name: '+s.name+'\nCourse: '+s.course+'\nMobile: '+s.mobile);
-});
-});
-}
-
-function adminLogin(){
-if(adminUser.value=='admin'&&adminPass.value=='12345'){
-alert('Admin Access Granted');
-}else{
-alert('Wrong Password');
-}
-}
-
-function generateCertificate(){
-certificate.style.display='block';
-certText.innerHTML='This certifies '+certName.value+' completed Spoken English Course.';
-}
-
-function saveMarksheet(){
-db.collection('marksheets').add({
-name:markName.value,
-english:english.value,
-math:math.value,
-science:science.value
-}).then(()=>alert('Marksheet Saved'));
-}
-
-function showMarksheet(){
-db.collection('marksheets')
-.where('name','==',markName.value)
-.get()
-.then(function(res){
-res.forEach(function(doc){
-let m=doc.data();
-let total=Number(m.english)+Number(m.math)+Number(m.science);
-alert(
-'English: '+m.english+
-'\nMath: '+m.math+
-'\nScience: '+m.science+
-'\nTotal: '+total
-);
-});
-});
-}
-
-function printIDCard(){
-var w=window.open('','','width=500,height=600');
-w.document.write(idcard.innerHTML);
-w.print();
-}
-
-function printReceipt(){
-var w=window.open('','','width=500,height=600');
-w.document.write(receipt.innerHTML);
-w.print();
-}
-
-function printFeeReceipt(){
-var w=window.open('','','width=500,height=600');
-w.document.write(
-'<h2>Fee Receipt</h2>'+
-'<p>Name:'+feeName.value+'</p>'+
-'<p>Amount: ₹'+feeAmount.value+'</p>'
-);
-w.print();
-}
-
-showData();
 </script>
 
 </body>
