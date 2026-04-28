@@ -1,177 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Salu English Academy PRO</title>
+<title>Salu App - Day 1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{margin:0;font-family:Arial;background:#eef2f7;}
-.header{background:#0d6efd;color:#fff;padding:15px;text-align:center;font-size:20px;}
-.card{background:#fff;margin:10px;padding:15px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
-input,select{width:100%;padding:10px;margin:5px 0;border-radius:8px;border:1px solid #ccc;}
-button{width:100%;padding:10px;margin-top:5px;background:#0d6efd;color:#fff;border:none;border-radius:8px;cursor:pointer;}
-.nav{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-around;background:#fff;border-top:1px solid #ccc;}
-.nav button{background:none;color:black;font-size:12px;}
-.hidden{display:none;}
+body{font-family:Arial;background:#eef2f7;}
+.box{width:300px;margin:50px auto;background:white;padding:20px;border-radius:10px;}
+input{width:100%;padding:10px;margin:5px 0;}
+button{width:100%;padding:10px;margin-top:5px;background:blue;color:white;border:none;}
 </style>
 </head>
 
 <body>
 
-<div class="header">🚀 Salu English Academy PRO</div>
-
-<!-- LOGIN -->
-<div id="login" class="card">
+<div class="box" id="loginBox">
 <h3>Login</h3>
 <input id="lmobile" placeholder="Mobile">
 <input id="lpass" type="password" placeholder="Password">
-<button onclick="loginUser()">Login</button>
+<button onclick="login()">Login</button>
 <button onclick="showRegister()">Register</button>
 </div>
 
-<!-- REGISTER -->
-<div id="register" class="card hidden">
+<div class="box" id="registerBox" style="display:none;">
 <h3>Register</h3>
 <input id="rname" placeholder="Name">
 <input id="rmobile" placeholder="Mobile">
 <input id="rpass" type="password" placeholder="Password">
-<select id="rrole">
-<option>Student</option>
-<option>Leader</option>
-<option>Admin</option>
-</select>
-<input id="ref" placeholder="Referral ID (optional)">
-<button onclick="registerUser()">Create Account</button>
-<button onclick="showLogin()">Back to Login</button>
+<button onclick="register()">Create Account</button>
+<button onclick="showLogin()">Back</button>
 </div>
 
-<!-- MAIN -->
-<div id="main" class="hidden">
-
-<div id="dashboard" class="card">
-<h3>Dashboard</h3>
-<p id="welcome"></p>
-<p id="wallet"></p>
-<p id="level"></p>
+<div class="box" id="dashboard" style="display:none;">
+<h3 id="welcome"></h3>
+<button onclick="logout()">Logout</button>
 </div>
 
-</div>
-
-<!-- FIREBASE -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
 
-// 🔴 APNA FIREBASE CONFIG YAHAN DALO
+// 🔥 YOUR REAL CONFIG
 var firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT"
+  apiKey: "AIzaSyDL7EqGc9GY1xAWLtBHLPAIZomnps82c1Y",
+  authDomain: "salu-english-academy.firebaseapp.com",
+  projectId: "salu-english-academy"
 };
 
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
-var user = null;
-
 // REGISTER
-function registerUser(){
+function register(){
+  var name = rname.value;
+  var mobile = rmobile.value;
+  var pass = rpass.value;
 
-var name = document.getElementById("rname").value;
-var mobile = document.getElementById("rmobile").value;
-var pass = document.getElementById("rpass").value;
-var role = document.getElementById("rrole").value;
-var ref = document.getElementById("ref").value;
+  firebase.auth().createUserWithEmailAndPassword(
+    mobile+"@salu.com", pass
+  ).then(res=>{
 
-if(name=="" || mobile=="" || pass==""){
-alert("All fields required ❌"); return;
-}
+    db.collection("users").doc(res.user.uid).set({
+      name:name,
+      mobile:mobile
+    });
 
-firebase.auth().createUserWithEmailAndPassword(
-mobile+"@salu.com", pass
-)
-.then(res=>{
+    alert("Account Created ✅");
+    showLogin();
 
-var id = "SALU"+Date.now();
-
-db.collection("users").doc(res.user.uid).set({
-id:id,
-name:name,
-mobile:mobile,
-role:role,
-ref:ref,
-wallet:0,
-level:"Starter"
-});
-
-alert("Account Created ✅");
-showLogin();
-
-})
-.catch(err=>{
-alert("Error: "+err.message);
-});
-
+  }).catch(err=>{
+    alert(err.message);
+  });
 }
 
 // LOGIN
-function loginUser(){
+function login(){
 
-var mobile = document.getElementById("lmobile").value;
-var pass = document.getElementById("lpass").value;
+  firebase.auth().signInWithEmailAndPassword(
+    lmobile.value+"@salu.com", lpass.value
+  ).then(res=>{
 
-if(mobile=="" || pass==""){
-alert("Enter mobile & password ❌"); return;
-}
+    db.collection("users").doc(res.user.uid).get()
+    .then(doc=>{
+      welcome.innerText = "Welcome " + doc.data().name;
+      loginBox.style.display="none";
+      dashboard.style.display="block";
+    });
 
-firebase.auth().signInWithEmailAndPassword(
-mobile+"@salu.com", pass
-)
-.then(res=>{
-
-db.collection("users").doc(res.user.uid).get()
-.then(doc=>{
-
-if(!doc.exists){
-alert("User data not found ❌"); return;
-}
-
-user = doc.data();
-
-document.getElementById("login").style.display="none";
-document.getElementById("main").style.display="block";
-
-loadDashboard();
-
-});
-
-})
-.catch(err=>{
-alert("Login Error: "+err.message);
-});
+  }).catch(err=>{
+    alert("Login Failed ❌");
+  });
 
 }
 
-// DASHBOARD
-function loadDashboard(){
-
-document.getElementById("welcome").innerText = "Welcome " + user.name;
-document.getElementById("wallet").innerText = "Wallet ₹" + user.wallet;
-document.getElementById("level").innerText = "Level: " + user.level;
-
-}
-
-// UI SWITCH
+// UI
 function showRegister(){
-document.getElementById("login").classList.add("hidden");
-document.getElementById("register").classList.remove("hidden");
+  loginBox.style.display="none";
+  registerBox.style.display="block";
 }
 
 function showLogin(){
-document.getElementById("register").classList.add("hidden");
-document.getElementById("login").classList.remove("hidden");
+  registerBox.style.display="none";
+  loginBox.style.display="block";
+}
+
+function logout(){
+  location.reload();
 }
 
 </script>
