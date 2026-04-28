@@ -1,257 +1,177 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-<title>Salu Cloud System</title>
+<title>Salu English Academy PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body { font-family: Arial; background:#eef2f5; text-align:center; }
-
-.box {
-  width:320px;
-  margin:20px auto;
-  background:white;
-  padding:20px;
-  border-radius:10px;
-}
-
-input, select, button {
-  width:100%;
-  padding:10px;
-  margin:5px 0;
-}
-
-button {
-  background:green;
-  color:white;
-  border:none;
-  cursor:pointer;
-}
-
-.hidden { display:none; }
-
-table {
-  width:95%;
-  margin:20px auto;
-  border-collapse:collapse;
-}
-
-th, td {
-  border:1px solid black;
-  padding:6px;
-}
+body{margin:0;font-family:Arial;background:#eef2f7;}
+.header{background:#0d6efd;color:#fff;padding:15px;text-align:center;font-size:20px;}
+.card{background:#fff;margin:10px;padding:15px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
+input,select{width:100%;padding:10px;margin:5px 0;border-radius:8px;border:1px solid #ccc;}
+button{width:100%;padding:10px;margin-top:5px;background:#0d6efd;color:#fff;border:none;border-radius:8px;cursor:pointer;}
+.nav{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-around;background:#fff;border-top:1px solid #ccc;}
+.nav button{background:none;color:black;font-size:12px;}
+.hidden{display:none;}
 </style>
-
 </head>
 
 <body>
 
+<div class="header">🚀 Salu English Academy PRO</div>
+
 <!-- LOGIN -->
-<div id="loginBox" class="box">
-<h2>Login</h2>
+<div id="login" class="card">
+<h3>Login</h3>
+<input id="lmobile" placeholder="Mobile">
+<input id="lpass" type="password" placeholder="Password">
+<button onclick="loginUser()">Login</button>
+<button onclick="showRegister()">Register</button>
+</div>
 
-<input type="text" id="username" placeholder="Name">
-<input type="text" id="mobile" placeholder="Mobile">
-
-<select id="coaching">
-<option value="">Select Coaching</option>
-<option>Salu English Academy</option>
-<option>Bright Future</option>
-<option>Success Coaching</option>
+<!-- REGISTER -->
+<div id="register" class="card hidden">
+<h3>Register</h3>
+<input id="rname" placeholder="Name">
+<input id="rmobile" placeholder="Mobile">
+<input id="rpass" type="password" placeholder="Password">
+<select id="rrole">
+<option>Student</option>
+<option>Leader</option>
+<option>Admin</option>
 </select>
-
-<button onclick="login()">Enter</button>
+<input id="ref" placeholder="Referral ID (optional)">
+<button onclick="registerUser()">Create Account</button>
+<button onclick="showLogin()">Back to Login</button>
 </div>
 
+<!-- MAIN -->
+<div id="main" class="hidden">
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="hidden">
-
-<h2>Dashboard</h2>
-
-<button onclick="showSection('admission')">New Admission</button>
-<button onclick="showSection('fee')">Fee</button>
-<button onclick="showSection('attendance')">Attendance</button>
-<button onclick="showSection('team')">Team</button>
-<button onclick="showSection('profile')">Profile</button>
+<div id="dashboard" class="card">
+<h3>Dashboard</h3>
+<p id="welcome"></p>
+<p id="wallet"></p>
+<p id="level"></p>
+</div>
 
 </div>
 
-
-<!-- ADMISSION -->
-<div id="admission" class="hidden box">
-<h3>New Admission</h3>
-<input type="text" id="sname" placeholder="Student Name">
-<input type="text" id="course" placeholder="Course">
-<input type="number" id="feeAmount" placeholder="Fee">
-
-<button onclick="saveStudent()">Save</button>
-</div>
-
-
-<!-- FEE -->
-<div id="fee" class="hidden box">
-<h3>Total Fee</h3>
-<p id="totalFee"></p>
-</div>
-
-
-<!-- ATTENDANCE -->
-<div id="attendance" class="hidden box">
-<h3>Attendance</h3>
-<button onclick="markAttendance()">Mark</button>
-<p id="attendanceCount"></p>
-</div>
-
-
-<!-- TEAM -->
-<div id="team" class="hidden box">
-<h3>Team + Income</h3>
-<p id="teamData"></p>
-</div>
-
-
-<!-- PROFILE -->
-<div id="profile" class="hidden box">
-<h3>ID Card</h3>
-<p id="profileData"></p>
-</div>
-
-
-<table id="table"></table>
-
-
-<!-- Firebase -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
 
-// 🔥 Firebase Config
+// 🔴 APNA FIREBASE CONFIG YAHAN DALO
 var firebaseConfig = {
-  apiKey: "AIzaSyDL7EqGc9GY1xAWLtBHLPAIZomnps82c1Y",
-  authDomain: "salu-english-academy.firebaseapp.com",
-  projectId: "salu-english-academy"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT"
 };
 
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
-var currentUser = {};
+var user = null;
 
+// REGISTER
+function registerUser(){
 
-// ✅ LOGIN (FIXED)
-function login() {
+var name = document.getElementById("rname").value;
+var mobile = document.getElementById("rmobile").value;
+var pass = document.getElementById("rpass").value;
+var role = document.getElementById("rrole").value;
+var ref = document.getElementById("ref").value;
 
-  var name = document.getElementById("username").value;
-  var mobile = document.getElementById("mobile").value;
-  var coaching = document.getElementById("coaching").value;
+if(name=="" || mobile=="" || pass==""){
+alert("All fields required ❌"); return;
+}
 
-  if(name=="" || mobile=="" || coaching=="") {
-    alert("Fill all ❌"); return;
-  }
+firebase.auth().createUserWithEmailAndPassword(
+mobile+"@salu.com", pass
+)
+.then(res=>{
 
-  currentUser = {name, mobile, coaching};
+var id = "SALU"+Date.now();
 
-  document.getElementById("loginBox").style.display="none";
-  document.getElementById("dashboard").style.display="block";
+db.collection("users").doc(res.user.uid).set({
+id:id,
+name:name,
+mobile:mobile,
+role:role,
+ref:ref,
+wallet:0,
+level:"Starter"
+});
+
+alert("Account Created ✅");
+showLogin();
+
+})
+.catch(err=>{
+alert("Error: "+err.message);
+});
 
 }
 
+// LOGIN
+function loginUser(){
 
-// SHOW SECTION
-function showSection(id) {
+var mobile = document.getElementById("lmobile").value;
+var pass = document.getElementById("lpass").value;
 
-  document.querySelectorAll(".box").forEach(x=>x.classList.add("hidden"));
-
-  document.getElementById(id).classList.remove("hidden");
-
-  loadData();
+if(mobile=="" || pass==""){
+alert("Enter mobile & password ❌"); return;
 }
 
+firebase.auth().signInWithEmailAndPassword(
+mobile+"@salu.com", pass
+)
+.then(res=>{
 
-// SAVE STUDENT (Firebase)
-function saveStudent() {
+db.collection("users").doc(res.user.uid).get()
+.then(doc=>{
 
-  var data = {
-    name: document.getElementById("sname").value,
-    course: document.getElementById("course").value,
-    fee: Number(document.getElementById("feeAmount").value),
-    coaching: currentUser.coaching
-  };
-
-  if(data.name=="") {
-    alert("Name required ❌"); return;
-  }
-
-  db.collection("students").add(data)
-  .then(()=>{
-    alert("Saved Online ✅");
-    loadData();
-  });
-
+if(!doc.exists){
+alert("User data not found ❌"); return;
 }
 
+user = doc.data();
 
-// LOAD DATA (Coaching wise)
-function loadData() {
+document.getElementById("login").style.display="none";
+document.getElementById("main").style.display="block";
 
-  var table = document.getElementById("table");
+loadDashboard();
 
-  table.innerHTML = `
-<tr>
-<th>Name</th>
-<th>Course</th>
-<th>Fee</th>
-</tr>`;
+});
 
-  var total = 0;
-  var count = 0;
-
-  db.collection("students")
-  .where("coaching","==",currentUser.coaching)
-  .get()
-  .then((res)=>{
-
-    res.forEach((doc)=>{
-
-      var s = doc.data();
-
-      total += s.fee;
-      count++;
-
-      table.innerHTML += `
-<tr>
-<td>${s.name}</td>
-<td>${s.course}</td>
-<td>${s.fee}</td>
-</tr>`;
-    });
-
-    document.getElementById("totalFee").innerText = "Total Fee: ₹"+total;
-    document.getElementById("teamData").innerText = "Students: "+count+" | Income: ₹"+total;
-
-  });
+})
+.catch(err=>{
+alert("Login Error: "+err.message);
+});
 
 }
 
+// DASHBOARD
+function loadDashboard(){
 
-// ATTENDANCE
-function markAttendance() {
+document.getElementById("welcome").innerText = "Welcome " + user.name;
+document.getElementById("wallet").innerText = "Wallet ₹" + user.wallet;
+document.getElementById("level").innerText = "Level: " + user.level;
 
-  db.collection("attendance").add({
-    coaching: currentUser.coaching,
-    date: new Date().toDateString()
-  });
-
-  document.getElementById("attendanceCount").innerText = "Marked ✅";
 }
 
+// UI SWITCH
+function showRegister(){
+document.getElementById("login").classList.add("hidden");
+document.getElementById("register").classList.remove("hidden");
+}
 
-// PROFILE
-function showSectionProfile() {
-  document.getElementById("profileData").innerText =
-    currentUser.name+" | "+currentUser.mobile+" | "+currentUser.coaching;
+function showLogin(){
+document.getElementById("register").classList.add("hidden");
+document.getElementById("login").classList.remove("hidden");
 }
 
 </script>
